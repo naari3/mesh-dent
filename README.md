@@ -48,6 +48,10 @@ Mesh Dent allows you to create dent/indent effects on SkinnedMeshRenderer meshes
 - **Normal**: Pushes vertices along their normals
 - **Surface**: Moves vertices to the sphere surface
 
+## For Developers
+
+- [リリース手順](docs/RELEASING.md)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
