@@ -1,0 +1,17 @@
+{
+  "name": "net.naari3.mesh-dent",
+  "displayName": "Mesh Dent",
+  "version": "0.1.0",
+  "unity": "2022.3",
+  "description": "NDMF plugin for applying mesh deformation with spherical shapes",
+  "author": {
+    "name": "naari3",
+    "url": "https://github.com/naari3"
+  },
+  "license": "MIT",
+  "url": "https://github.com/naari3/mesh-dent",
+  "vpmDependencies": {
+    "nadena.dev.ndmf": ">=1.10.0",
+    "com.anatawa12.avatar-optimizer": ">=1.8.0"
+  }
+}

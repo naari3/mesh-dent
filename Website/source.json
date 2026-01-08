@@ -1,0 +1,9 @@
+{
+  "name": "naari3's VPM Repository",
+  "id": "net.naari3.vpm",
+  "url": "https://naari3.github.io/mesh-dent/vpm.json",
+  "author": "naari3",
+  "packages": [
+    "https://github.com/naari3/mesh-dent"
+  ]
+}

@@ -1,0 +1,12 @@
+# Unity generated
+*.meta
+
+# IDE
+.idea/
+.vs/
+*.csproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db

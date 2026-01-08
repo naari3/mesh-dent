@@ -1,0 +1,104 @@
+name: Build VPM Listing
+
+on:
+  push:
+    branches: [master]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  PKG_NAME: net.naari3.mesh-dent
+
+jobs:
+  build-listing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get releases
+        id: releases
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const versions = {};
+            for (const release of releases.data) {
+              if (release.draft) continue;
+
+              const version = release.tag_name;
+              const zipAsset = release.assets.find(a => a.name.endsWith('.zip'));
+              if (!zipAsset) continue;
+
+              versions[version] = {
+                name: process.env.PKG_NAME,
+                displayName: "Mesh Dent",
+                version: version,
+                unity: "2022.3",
+                description: "NDMF plugin for applying mesh deformation with spherical shapes",
+                url: zipAsset.browser_download_url,
+                vpmDependencies: {
+                  "nadena.dev.ndmf": ">=1.10.0",
+                  "com.anatawa12.avatar-optimizer": ">=1.8.0"
+                }
+              };
+            }
+
+            return versions;
+
+      - name: Build vpm.json
+        run: |
+          mkdir -p output
+          cat > output/vpm.json << 'TEMPLATE'
+          {
+            "name": "naari3's VPM Repository",
+            "id": "net.naari3.vpm",
+            "url": "https://naari3.github.io/mesh-dent/vpm.json",
+            "author": "naari3",
+            "packages": {
+              "${{ env.PKG_NAME }}": {
+                "versions": ${{ steps.releases.outputs.result }}
+              }
+            }
+          }
+          TEMPLATE
+          cat output/vpm.json
+
+      - name: Copy index.html
+        run: |
+          if [ -f Website/index.html ]; then
+            cp Website/index.html output/
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'output'
+
+  deploy:
+    needs: build-listing
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
